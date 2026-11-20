@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 public class TestServiceImplTest {
-    private final static int GEO_FIELDS_COUNT = 26;
+    private final static int GEO_FIELDS_COUNT = 20;
     private final static int DEFAULT_TEST_FIELDS_COUNT = 38;
     private final static int NDT_TEST_FIELDS_COUNT = 7;
     private final static int BAND_TEST_FIELDS_COUNT = 4;
@@ -214,6 +214,22 @@ public class TestServiceImplTest {
             assertEquals(getDefaultTestResultResponse().getTestResultDetailContainerResponse().get(i), result.getTestResultDetailContainerResponse().get(i));
         }
         assertEquals(getDefaultTestResultResponse(), result);
+    }
+
+    @Test
+    public void getTestResultDetailByTestUUID_whenCellLocationNamePresent_expectNameIncluded() {
+        at.rtr.rmbt.model.Test test = getDefaultTest();
+        test.setCellLocationName("Ljubljana Center");
+        when(testResultDetailRequest.getLanguage()).thenReturn(TestConstants.DEFAULT_LANGUAGE);
+        when(testResultDetailRequest.getTestUUID()).thenReturn(TestConstants.DEFAULT_TEST_UUID);
+        when(testRepository.findByUuidAndStatusesInAndActive(TestConstants.DEFAULT_TEST_UUID, Config.TEST_RESULT_DETAIL_STATUSES))
+                .thenReturn(Optional.of(test));
+
+        var result = testService.getTestResultDetailByTestUUID(testResultDetailRequest);
+
+        assertEquals(DEFAULT_TEST_FIELDS_COUNT + 1, result.getTestResultDetailContainerResponse().size());
+        org.junit.Assert.assertTrue(result.getTestResultDetailContainerResponse().stream()
+                .anyMatch(field -> "Ljubljana Center".equals(field.getValue())));
     }
 
     @Test
@@ -939,16 +955,10 @@ This test tests for DualSim differentiation, but not DualSim shall be treated eq
                 getTestResultDetailContainerResponse("key_geo_altitude", TestConstants.DEFAULT_TEST_RESULT_DETAIL_GEO_ALTITUDE),
                 getTestResultDetailContainerResponse("key_geo_speed", TestConstants.DEFAULT_TEST_RESULT_DETAIL_GEO_SPEED),
                 getTestResultDetailContainerResponse("key_dtm_level", TestConstants.DEFAULT_TEST_RESULT_DETAIL_DTM_LEVEL),
-                getTestResultDetailContainerResponse("key_gkz_bev", TestConstants.DEFAULT_GKZ_BEV.toString()),
-                getTestResultDetailContainerResponse("key_gkz_sa", TestConstants.DEFAULT_GKZ_SA.toString()),
-                getTestResultDetailContainerResponse("key_land_cover", TestConstants.DEFAULT_TEST_RESULT_DETAIL_LAND_COVER),
-                getTestResultDetailContainerResponse("key_settlement_type", TestConstants.DEFAULT_TEST_RESULT_DETAIL_SETTLEMENT_TYPE),
                 getTestResultDetailContainerResponse("key_link_name", TestConstants.DEFAULT_TEST_LOCATION_LINK_NAME),
                 getTestResultDetailContainerResponse("key_link_distance", TestConstants.DEFAULT_TEST_LOCATION_LINK_DISTANCE.toString()),
                 getTestResultDetailContainerResponse("key_edge_id", TestConstants.DEFAULT_TEST_LOCATION_EDGE_ID.toString()),
                 getTestResultDetailContainerResponse("key_link_frc", TestConstants.DEFAULT_TEST_LOCATION_FRC.toString()),
-                getTestResultDetailContainerResponse("key_atraster100", TestConstants.DEFAULT_ATRASTER100.toString()),
-                getTestResultDetailContainerResponse("key_atraster250", TestConstants.DEFAULT_ATRASTER250.toString()),
                 getTestResultDetailContainerResponse("key_link_id", TestConstants.DEFAULT_LINKNET_LINK_ID.toString()),
                 getTestResultDetailContainerResponse("key_link_name1", TestConstants.DEFAULT_LINKNET_NAME1),
                 getTestResultDetailContainerResponse("key_link_name2", TestConstants.DEFAULT_LINKNET_NAME2),

@@ -746,7 +746,23 @@ public class TestServiceImpl implements TestService {
         addLong(propertiesList, locale, "client_public_ip_as", test.getPublicIpAsn());
         addString(propertiesList, locale, "client_public_ip_as_name", test.getPublicIpAsName());
         addString(propertiesList, locale, "client_public_ip_rdns", test.getPublicIpRdns());
-        Optional.ofNullable(test.getProvider())
+        // addString(propertiesList, locale, "cell_location_name", test.getCellLocationName());
+        System.out.println("-----------------JC_test_cell_id " + "start");
+                try
+                {
+                    System.out.println("-----------------JC_test_cell_id " + "DbConnection");
+                    addString(propertiesList, locale, "cell_location_name", test.getCellLocationName());
+        
+                }
+                catch (final Exception e)
+                {
+                    System.out.println("-----------------JC_test_cell_id " + String.valueOf(e));
+        }
+     
+     
+     
+     
+                Optional.ofNullable(test.getProvider())
                 .map(Provider::getShortName)
                 .ifPresent(providerShortName -> addString(propertiesList, locale, "provider", providerShortName));
         addString(propertiesList, locale, "client_local_ip", test.getClientIpLocalType());
@@ -804,16 +820,16 @@ public class TestServiceImpl implements TestService {
 
     private void addTestLocationFields(List<TestResultDetailContainerResponse> propertiesList, Locale locale, TestLocation testLocation, UUID openTestUUID) {
         addGeoLocation(propertiesList, locale, testLocation, openTestUUID);
-        addInteger(propertiesList, locale, "gkz_bev", testLocation.getGkzBev());
-        addInteger(propertiesList, locale, "gkz_sa", testLocation.getGkzSa());
-        addLandCoverString(propertiesList, locale, testLocation.getLandCover());
-        addSettlementType(propertiesList, locale, testLocation.getSettlementType());
+        //addInteger(propertiesList, locale, "gkz_bev", testLocation.getGkzBev());
+        //addInteger(propertiesList, locale, "gkz_sa", testLocation.getGkzSa());
+        //addLandCoverString(propertiesList, locale, testLocation.getLandCover());
+        //addSettlementType(propertiesList, locale, testLocation.getSettlementType());
         addString(propertiesList, locale, "link_name", testLocation.getLinkName());
         addInteger(propertiesList, locale, "link_distance", testLocation.getLinkDistance());
         addLong(propertiesList, locale, "edge_id", testLocation.getEdgeId());
         addInteger(propertiesList, locale, "link_frc", testLocation.getFrc());
-        addString(propertiesList, locale, "atraster100", testLocation.getAtraster100());
-        addString(propertiesList, locale, "atraster250", testLocation.getAtraster250());
+        //addString(propertiesList, locale, "atraster100", testLocation.getAtraster100());
+        //addString(propertiesList, locale, "atraster250", testLocation.getAtraster250());
         Optional.ofNullable(testLocation.getLinknet())
                 .ifPresent(linknet -> addLinkNetFields(propertiesList, locale, linknet));
         Optional.ofNullable(testLocation.getAdministrativeBoundaries())
@@ -883,7 +899,7 @@ public class TestServiceImpl implements TestService {
     }
 
     private void addSettlementType(List<TestResultDetailContainerResponse> propertiesList, Locale locale, Integer settlementType) {
-        if (Objects.nonNull(settlementType)) {
+        if (Objects.nonNull(settlementType) && false) {
             switch (settlementType) {
                 case 1:
                     // No settlement area

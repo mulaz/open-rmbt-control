@@ -43,7 +43,7 @@ public class RadioCellServiceImplTest {
     }
 
     @Test
-    public void processRadioCellRequests_whenLocationChangedAndAreaCodeChangedAndBandChanged_expectRadioCellSavedAndTestNotModified() {
+    public void processRadioCellRequests_whenLocationChangedAndAreaCodeChangedAndBandChanged_expectRadioCellSavedAndFirstCellRetained() {
         var requests = List.of(radioCellRequestFirst, radioCellRequestSecond);
         when(radioCellMapper.radioCellRequestToRadioCell(radioCellRequestFirst, test)).thenReturn(radioCellFirst);
         when(radioCellMapper.radioCellRequestToRadioCell(radioCellRequestSecond, test)).thenReturn(radioCellSecond);
@@ -61,10 +61,11 @@ public class RadioCellServiceImplTest {
         radioCellService.processRadioCellRequests(requests, test);
 
         verify(radioCellRepository).saveAll(List.of(radioCellFirst, radioCellSecond));
-        verify(test, times(0)).setRadioBand(any());
-        verify(test, times(0)).setCellLocationId(any());
-        verify(test, times(0)).setCellAreaCode(any());
-        verify(test, times(0)).setChannelNumber(any());
+        verify(test).setRadioBand(TestConstants.DEFAULT_BAND);
+        verify(test).setCellLocationId(TestConstants.DEFAULT_GEO_LOCATION_UID_FIRST);
+        verify(test).setCellAreaCode(TestConstants.DEFAULT_AREA_CODE_FIRST);
+        verify(test).setChannelNumber(TestConstants.DEFAULT_CHANNEL_NUMBER_FIRST);
+        verifyNoMoreInteractions(test);
     }
 
     @Test
